@@ -1,11 +1,11 @@
 {
-    "name": "note_alarm_app",
-    "short_name": "note_alarm_app",
+    "name": "PxNote",
+    "short_name": "PxNote",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Notlarını kaydet, zamanı ayarla ve alarmını kaçırma.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

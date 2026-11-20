@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0d17">
+  <meta name="description" content="PxNote ile notlarını kaydet, zamana bağlı hatırlatıcı veya alarm oluştur.">
+  <title>PxNote - Not ve Alarm</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <style>
+    :root {
+      --bg: #090b14;
+      --panel: rgba(21, 24, 42, .82);
+      --text: #f7f7ff;
+      --muted: #aaaac1;
+      --purple: #9f7aea;
+      --blue: #6da5ff;
+      --pink: #ff83b8;
+      --mint: #76dcb5;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(159,122,234,.18), transparent 28rem),
+        radial-gradient(circle at 88% 32%, rgba(109,165,255,.12), transparent 24rem),
+        var(--bg);
+    }
+
+    a { color: inherit; }
+    .nav, .hero, .features, footer { width: min(1120px, calc(100% - 40px)); margin-inline: auto; }
+    .nav {
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 20px; }
+    .brand-mark {
+      width: 42px; height: 42px; display: grid; place-items: center;
+      border-radius: 13px; background: linear-gradient(135deg, var(--purple), var(--blue));
+      box-shadow: 0 12px 30px rgba(159,122,234,.25);
+    }
+    .nav-link {
+      text-decoration: none; color: var(--muted); font-size: 14px;
+      border: 1px solid rgba(255,255,255,.09); padding: 10px 14px; border-radius: 12px;
+    }
+
+    .hero {
+      min-height: 580px;
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      align-items: center;
+      gap: 64px;
+      padding: 56px 0 70px;
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: #cfc1ff; font-size: 13px; font-weight: 800; letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .eyebrow-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 16px var(--mint); }
+    h1 { margin: 18px 0 20px; max-width: 700px; font-size: clamp(48px, 7vw, 82px); line-height: .98; letter-spacing: -.055em; }
+    .gradient-text { background: linear-gradient(100deg, #c4afff 5%, #87b4ff 55%, #f39bc3); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .hero-copy { max-width: 570px; color: var(--muted); font-size: 18px; line-height: 1.75; }
+    .actions { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+    .button {
+      min-height: 54px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      border-radius: 15px; padding: 0 20px; text-decoration: none; font-weight: 800;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .button:hover { transform: translateY(-3px); }
+    .button-primary { background: linear-gradient(135deg, #9170e8, #668fd7); box-shadow: 0 16px 36px rgba(111,139,214,.22); }
+    .button-secondary { border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.035); color: #dedeee; }
+
+    .phone-wrap { position: relative; }
+    .phone-glow { position: absolute; inset: 12% 5% -2%; background: #7763c8; filter: blur(70px); opacity: .18; }
+    .phone {
+      position: relative; width: 360px; height: 520px; margin: auto;
+      border: 1px solid rgba(255,255,255,.12); border-radius: 38px;
+      background: #111321; padding: 14px;
+      box-shadow: 0 34px 70px rgba(0,0,0,.42), inset 0 0 0 7px #090a12;
+      transform: rotate(2deg);
+    }
+    .phone-screen { height: 100%; overflow: hidden; border-radius: 27px; background: #0d1020; padding: 25px 18px 18px; }
+    .phone-header { display: flex; justify-content: space-between; align-items: center; font-size: 21px; font-weight: 800; }
+    .phone-icons { display: flex; gap: 8px; }
+    .phone-icon { width: 30px; height: 30px; border: 1px solid rgba(255,255,255,.08); border-radius: 9px; background: #171a2b; }
+    .section-label { margin: 23px 0 10px; color: #777994; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .11em; }
+    .note-card { border-radius: 16px; background: #191c2d; border: 1px solid rgba(255,255,255,.055); padding: 15px; margin-bottom: 10px; }
+    .note-card.featured { background: linear-gradient(135deg, rgba(126,104,191,.26), rgba(91,116,166,.14)); }
+    .note-title { font-weight: 800; font-size: 14px; }
+    .note-meta { margin-top: 8px; color: #aaaaca; font-size: 11px; display: flex; justify-content: space-between; }
+    .badge { color: #d0c6ff; background: rgba(159,122,234,.15); padding: 5px 7px; border-radius: 7px; }
+    .fab { position: absolute; right: 34px; bottom: 30px; width: 54px; height: 54px; display: grid; place-items: center; border-radius: 18px; background: linear-gradient(135deg, #a477dc, #718fd2); font-size: 28px; box-shadow: 0 12px 25px rgba(159,122,234,.28); }
+
+    .features { padding: 32px 0 86px; }
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .feature { min-height: 190px; border: 1px solid rgba(255,255,255,.075); background: var(--panel); border-radius: 22px; padding: 25px; }
+    .feature-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 13px; background: rgba(159,122,234,.12); color: #bcabf7; font-size: 20px; }
+    .feature:nth-child(2) .feature-icon { background: rgba(109,165,255,.12); color: #96bbf6; }
+    .feature:nth-child(3) .feature-icon { background: rgba(118,220,181,.10); color: #9ae3c6; }
+    .feature h2 { margin: 20px 0 8px; font-size: 18px; }
+    .feature p { margin: 0; color: var(--muted); line-height: 1.65; font-size: 14px; }
+
+    footer { border-top: 1px solid rgba(255,255,255,.07); min-height: 90px; display: flex; align-items: center; justify-content: space-between; color: #7d7e94; font-size: 13px; }
+    footer a { text-decoration: none; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; text-align: center; padding-top: 35px; }
+      .hero-copy, h1 { margin-inline: auto; }
+      .actions { justify-content: center; }
+      .phone-wrap { margin-top: 10px; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .nav, .hero, .features, footer { width: min(100% - 28px, 1120px); }
+      .nav-link { display: none; }
+      h1 { font-size: 49px; }
+      .hero { gap: 30px; }
+      .phone { width: 300px; height: 460px; }
+      .actions { flex-direction: column; }
+      .button { width: 100%; }
+      footer { align-items: flex-start; flex-direction: column; justify-content: center; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav" aria-label="Ana navigasyon">
+    <div class="brand"><span class="brand-mark">N</span> PxNote</div>
+    <a class="nav-link" href="https://github.com/pxen0/PxNote" target="_blank" rel="noreferrer">GitHub'da görüntüle ↗</a>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div>
+        <div class="eyebrow"><span class="eyebrow-dot"></span> Android için hazır</div>
+        <h1>Notlarınla <span class="gradient-text">zamanda buluş.</span></h1>
+        <p class="hero-copy">Basit, hızlı ve odaklı. Notlarını oluştur, zamana göre hatırlatıcı veya alarm ayarla; önemli olanları sabitle.</p>
+        <div class="actions">
+          <a class="button button-primary" href="PxNote.apk" download="PxNote.apk">
+            <span aria-hidden="true">↓</span> Android APK indir
+          </a>
+          <a class="button button-secondary" href="https://github.com/pxen0/PxNote" target="_blank" rel="noreferrer">Kaynak kodunu incele</a>
+        </div>
+      </div>
+
+      <div class="phone-wrap" aria-label="PxNote uygulama önizlemesi">
+        <div class="phone-glow"></div>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-header"><span>Notlarım</span><div class="phone-icons"><span class="phone-icon"></span><span class="phone-icon"></span></div></div>
+            <div class="section-label">Sabitlenenler</div>
+            <div class="note-card featured">
+              <div class="note-title">Toplantı hazırlığı</div>
+              <div class="note-meta"><span>20 Kas · 09:30</span><span class="badge">Alarm</span></div>
+            </div>
+            <div class="section-label">Diğer notlar</div>
+            <div class="note-card">
+              <div class="note-title">Kitap almak</div>
+              <div class="note-meta"><span>20 Kas · 18:00</span><span class="badge">Hatırlatıcı</span></div>
+            </div>
+            <div class="note-card">
+              <div class="note-title">Haftalık plan</div>
+              <div class="note-meta"><span>Bugün</span><span>✓</span></div>
+            </div>
+            <div class="fab">+</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="features-grid">
+        <article class="feature"><div class="feature-icon">◆</div><h2>Notlarını düzenle</h2><p>Başlık ve açıklama ekle, sabitle, tamamlandı olarak işaretle veya tek dokunuşla sil.</p></article>
+        <article class="feature"><div class="feature-icon">◷</div><h2>Zamanla hatırla</h2><p>İstediğin tarih ve saati seç; bildirim veya kesintisiz alarm oluştur.</p></article>
+        <article class="feature"><div class="feature-icon">A</div><h2>Senin dilin</h2><p>Türkçe, İngilizce ve İspanyolca seçenekleriyle kullan. Açık ve koyu tema desteği bulunur.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer><span>© 2026 PxNote</span><a href="https://github.com/pxen0/PxNote" target="_blank" rel="noreferrer">pxen0/PxNote</a></footer>
+</body>
+</html>
